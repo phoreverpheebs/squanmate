@@ -63,7 +63,7 @@
    [:a {:href "http://www.cubezone.be/square1step1.html"
         :target "_blank"}
     "Lars Vandenbergh's CubeZone"]
-   ". It is genious, and should be attributed to him."])
+   ". It is genius, and should be attributed to him."])
 
 (defn content []
   [:div.row.col-xs-12
