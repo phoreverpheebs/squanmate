@@ -18,8 +18,8 @@
   (let [layer-count (-> @state :selected-shapes count)]
     [case-counter/selected-cases-counter layer-count 90]))
 
-(defn- timer []
-  [timer/inspection-timer (timer/new-count-down-timer 15)])
+(defn- timer [state]
+  [timer/inspection-timer (:timer @state)])
 
 (defn- scramble-preview [state]
   [:div.col-xs-10.col-md-6.col-lg-6.scramble
@@ -106,6 +106,7 @@
     :scramble-algorithm nil
     :middle-layer-settings (deref (middle-layer-controls/default-state))
     :inspection-timer-settings (deref (inspection-timer-settings/default-state))
+    :timer nil
     ;; optional
     :keybindings keybindings}))
 

@@ -35,7 +35,8 @@
                  [cljsjs/tock "1.0.12-0"]
 
                  ;; provides tinycolor internally!
-                 [cljsjs/react-color "2.13.1-0"]]
+                 [cljsjs/react-color "2.13.1-0"]
+                 [javax.xml.bind/jaxb-api "2.4.0-b180830.0359"]]
 
   :plugins [[lein-figwheel "0.5.13"]
             [lein-cljsbuild "1.1.5" :exclusions [org.clojure/clojure]]

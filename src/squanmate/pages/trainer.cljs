@@ -4,7 +4,8 @@
             [squanmate.scramblers.shape-scrambler.actions :as a]
             [squanmate.scramblers.shape-scrambler.settings-handler :as settings]
             [squanmate.services.global-colors-store :as global-colors-store]
-            [squanmate.services.keyboard :as keyboard]))
+            [squanmate.services.keyboard :as keyboard]
+            [squanmate.ui.inspection-timer :as timer]))
 
 (def ^:private keybindings
   [{:key-combination "space"
@@ -39,7 +40,12 @@
    {:key-combination "r f"
     :description "Repeat and flip top and bottom layers"
     :action (fn [state]
-              (a/set-new-scramble-with-flipped-layers state))}])
+              (a/set-new-scramble-with-flipped-layers state))}
+
+   {:key-combination "."
+    :action (fn [state]
+              (print "doing the thing")
+              (a/start-timer state))}])
 
 (defn initial-state []
   (let [settings-atom (shape-scrambler/new-state :keybindings keybindings)

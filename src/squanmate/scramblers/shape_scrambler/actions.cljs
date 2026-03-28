@@ -7,7 +7,8 @@
             [squanmate.services.solving :as solving]
             [clojure.set :as set]
             [squanmate.services.storage :as storage]
-            [squanmate.scramblers.shape-scrambler.flip-layers-scrambler :as flip-layers-scrambler]))
+            [squanmate.scramblers.shape-scrambler.flip-layers-scrambler :as flip-layers-scrambler]
+            [squanmate.ui.inspection-timer :as timer]))
 
 (defonce all-layers (->> shape-combinations/possible-layers
                          (map set)
@@ -28,6 +29,7 @@
     (swap! state assoc
            :scramble-algorithm nil
            :puzzle new-scramble
+           :timer (timer/new-count-down-timer 15)
            :chosen-shapes (into #{} chosen-layers))
     (solving/solve-and-generate-scramble new-scramble state)))
 
@@ -62,4 +64,4 @@
   (set-new-random-scramble state))
 
 (defn start-timer [state]
-  (timer state))
+  ((:start-fn @(:timer @state))))
