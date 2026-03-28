@@ -4,7 +4,6 @@
   (:require-macros
    [devcards.core :as dc :refer [defcard-rg deftest]]))
 
-
 (deftest convert-color-names []
   (is (= "#fdfdfd" (sut/color->hex :white)))
   (is (= "#fffe45" (sut/color->hex :yellow)))

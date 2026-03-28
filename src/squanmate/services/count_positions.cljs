@@ -13,9 +13,9 @@
   ;; the user isn't surprised by the count positions switching unexpectedly
   (let [layer-name (shapes/layer-shape-name-key top-layer)
         bottom-layer-name (-> (shape-combinations/filtered-possible-shapes layer-name)
-                               list*
-                               sort
-                               first)]
+                              list*
+                              sort
+                              first)]
     (get shapes/all-shapes bottom-layer-name)))
 
 (defn- puzzle-with-top-layer

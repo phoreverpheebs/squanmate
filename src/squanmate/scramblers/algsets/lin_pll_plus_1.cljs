@@ -8,8 +8,7 @@
 ;; Arrangement + images are done by Mattheo de Wit
 
 (def ^:private even-cases
-  [
-   ;; L5E
+  [   ;; L5E
    ["1. Adj-FR" "(-3,2)/(1,0)/(0,-3)/(-1,0)/(-3,0)/(1,0)/(0,3)/(-1,0)/(6,-2)"]
    ["2. Adj-BR" "(1,3) /(2,-1)/(-2,1)/(-1,-1)/(3,0)/(-2,1)/(-1,-3)"]
    ["3. Adj-BL" "(4,0)/(0,3)/(3,0)/(-1,-1)/(-2,1)/(0,-3)/(2,0)"]
@@ -105,7 +104,6 @@
 
 (def ^:private odd-cases
   [])
-
 
 (def lin-pll-plus-1-algset
   (algset/->CaseByCaseAlgSet odd-cases even-cases))

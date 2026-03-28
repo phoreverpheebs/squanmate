@@ -10,3 +10,5 @@
 /resources/public/js/testable.js
 /out
 /doo-index.html
+/.clj-kondo
+/.lsp

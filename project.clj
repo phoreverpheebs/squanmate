@@ -49,8 +49,7 @@
 
   :source-paths ["src"]
 
-  :cljsbuild {
-              :builds [{:id "devcards"
+  :cljsbuild {:builds [{:id "devcards"
                         :source-paths ["src" "test"]
                         :figwheel {:devcards true ;; <- note this
                                    ;; :open-urls will pop open your application
@@ -79,7 +78,7 @@
                                    :asset-path "js/compiled/out"
                                    :output-to  "resources/public/js/compiled/squanmate.js"
                                    :output-dir "resources/public/js/compiled/out"
-                                   :source-map-timestamp true }}
+                                   :source-map-timestamp true}}
                        {:id "prod"
                         :source-paths ["src"]
                         :compiler {:main       "squanmate.core"
@@ -101,7 +100,7 @@
                                    ;; :pseudo-names true
                                    }}]}
 
-  :figwheel { :css-dirs ["resources/public/css"] }
+  :figwheel {:css-dirs ["resources/public/css"]}
 
   :profiles {:dev {:dependencies [[binaryage/devtools "0.9.2"]
                                   [figwheel-sidecar "0.5.13"]

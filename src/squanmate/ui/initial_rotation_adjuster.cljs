@@ -34,23 +34,23 @@
                (manipulation/try-update-alg-string
                 algorithm-string
                 (partial manipulation/prepend-initial-rotation
-                   (manipulation/negate-step rotations))))))))
+                         (manipulation/negate-step rotations))))))))
 
 ;; todo move to its own file
 (defn initial-rotation-adjuster [puzzle
                                  rotation-atom
                                  algorithm-atom]
   [common/accordion
-    [common/panel {:header (reagent/as-element [:span [common/glyphicon {:glyph :repeat}]
-                                                " Initial rotation"])}
-     [:div
-      "To get a more comfortable count position for doing your parity count,
+   [common/panel {:header (reagent/as-element [:span [common/glyphicon {:glyph :repeat}]
+                                               " Initial rotation"])}
+    [:div
+     "To get a more comfortable count position for doing your parity count,
      adjust the layers' starting position as you like."
-      [:div.top5
-       [usage-tip-component]]
-      [:div.center
-       [rac/rotation-controls
-        puzzle
-        rotation-atom
-        algorithm-atom
-        initial-rotation-adjustment-for-parity-count]]]]])
+     [:div.top5
+      [usage-tip-component]]
+     [:div.center
+      [rac/rotation-controls
+       puzzle
+       rotation-atom
+       algorithm-atom
+       initial-rotation-adjustment-for-parity-count]]]]])

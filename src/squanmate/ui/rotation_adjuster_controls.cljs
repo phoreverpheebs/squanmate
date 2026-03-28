@@ -35,7 +35,6 @@
                  algorithm-atom
                  direction]))
 
-
 (defn- rotation-button [glyph handler]
   [common/button {:on-click handler}
    [common/glyphicon {:glyph glyph}]])

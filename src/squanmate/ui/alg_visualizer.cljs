@@ -135,11 +135,11 @@
           [algorithm-visualization initial-puzzle (:algorithm @state)]]]))]]
    [:div.col-xs-4.pull-right
     (eu/when-right initial-puzzle
-      (fn [p]
-        [initial-rotation-adjuster/initial-rotation-adjuster
-         p
-         (reagent/cursor state [:initial-rotation])
-         (reagent/cursor state [:algorithm])]))]])
+                   (fn [p]
+                     [initial-rotation-adjuster/initial-rotation-adjuster
+                      p
+                      (reagent/cursor state [:initial-rotation])
+                      (reagent/cursor state [:algorithm])]))]])
 
 (defn alg-visualizer [state]
   (let [top-layer-name (-> @state :puzzle-chooser-layer-names :top)

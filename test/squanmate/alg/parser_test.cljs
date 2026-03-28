@@ -31,7 +31,7 @@
 (deftest rotation-instruction-top-layer-only-test []
   (is (= (rotate -3 0)
          (p/run (a/rotation-instruction-top-layer-only)
-           "-3"))))
+                "-3"))))
 
 (deftest algorithm-test []
   (is (= (either/right [])

@@ -60,3 +60,6 @@
   (let [this-case (:chosen-shapes @state)]
     (swap! state update :selected-shapes set/difference #{this-case}))
   (set-new-random-scramble state))
+
+(defn start-timer [state]
+  (timer state))

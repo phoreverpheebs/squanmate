@@ -31,7 +31,7 @@
   (let [top (-> spec :starting-puzzle-spec :top-name)
         bottom (-> spec :starting-puzzle-spec :bottom-name)
         p (shapes/puzzle-with-layers top bottom)
-        rotation (-> spec :starting-puzzle-spec :initial-rotation) ]
+        rotation (-> spec :starting-puzzle-spec :initial-rotation)]
     (m/mlet [result (execution/transformation-result p rotation)]
             (m/return (:puzzle result)))))
 

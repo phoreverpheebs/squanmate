@@ -110,7 +110,7 @@
   (let [a-perms (ordered-permutations (:pieces layer-a))]
     (->> a-perms
          (some (partial same-piece-type-order?
-                  (:pieces layer-b))))))
+                        (:pieces layer-b))))))
 
 (defn layer-shape [layer]
   (->> all-shapes

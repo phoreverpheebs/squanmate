@@ -6,7 +6,6 @@
             [squanmate.alg.types :as types]
             [squanmate.alg.manipulation :as manipulation]))
 
-
 (defn- rotate-square-layer
   "Rotates and keeps the expected orientation of the layer so scrambles can be
   generated from it."

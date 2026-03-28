@@ -18,8 +18,8 @@
 (defparser integer []
   (let->> [sign (optional (p/char "-"))
            digits (p/many1 (p/digit))]
-    (p/always (read-string (str sign
-                                (apply str digits))))))
+          (p/always (read-string (str sign
+                                      (apply str digits))))))
 
 (defn whitespace? [character]
   (re-matches #"\s" character))
@@ -49,14 +49,14 @@
            _ (whitespace)
            _ (optional (p/char ")"))
            _ (whitespace)]
-    (p/always result)))
+          (p/always result)))
 
 (defparser comma []
   (p/char ","))
 
 (defparser rotation-instruction-top-layer-only []
   (let->> [top-amount (integer)]
-    (p/always (types/Rotations. top-amount 0))))
+          (p/always (types/Rotations. top-amount 0))))
 
 (defparser rotation-instruction []
   (let->> [_ (whitespace)
@@ -65,7 +65,7 @@
            _ (comma)
            _ (whitespace)
            bottom-amount (integer)]
-    (p/always (types/Rotations. top-amount bottom-amount))))
+          (p/always (types/Rotations. top-amount bottom-amount))))
 
 (defn- non-nils [coll]
   (filterv (comp not nil?) coll))
@@ -90,8 +90,8 @@
            reverse? (optional (p/either (p/char "'")
                                         (p/char "’")))
            _ (whitespace)]
-    (let [rotations (face-move-letter-to-rotations move reverse?)]
-      (p/always rotations))))
+          (let [rotations (face-move-letter-to-rotations move reverse?)]
+            (p/always rotations))))
 
 (def m2 [(types/->Rotations 1 0)
          (types/Slice.)
@@ -103,7 +103,7 @@
   (let->> [_ (whitespace)
            _ (p/string "M2")
            _ (whitespace)]
-    (p/always m2)))
+          (p/always m2)))
 
 (defparser rotations []
   (let->> [_ (whitespace)
@@ -113,7 +113,7 @@
                                (in-parens-maybe
                                 (rotation-instruction-top-layer-only)))
            _ (whitespace)]
-    (p/always rotations)))
+          (p/always rotations)))
 
 (defparser step []
   (p/>> (whitespace)
@@ -125,7 +125,7 @@
              _ (whitespace)
              _ (safe-ignore-characters)
              _ (p/eof)]
-    (p/always (flatten alg-steps))))
+            (p/always (flatten alg-steps))))
 
 (defn parse
   "Supported formats:
@@ -139,6 +139,6 @@
   [algorithm-string]
   (let [result (either/try-either
                 (p/run
-                  (algorithm)
-                  (str/trim algorithm-string)))]
+                 (algorithm)
+                 (str/trim algorithm-string)))]
     (m/left-map #(aget % "message") result)))

@@ -75,8 +75,7 @@
           default-bottom-pieces]
          (puzzle-id
           (sut/swap-pieces p/square-square
-                           {
-                            :ul-edge :ur-edge
+                           {:ul-edge :ur-edge
                             :ub-edge :uf-edge})))
       "swaps two pairs of pieces on the top layer")
 

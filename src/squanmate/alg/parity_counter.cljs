@@ -4,12 +4,12 @@
             [clojure.string :as str]
             [squanmate.services.shapes :as shapes]))
 
-(defrecord ParityCount[top-corner-order
-                       top-edge-order
-                       bottom-corner-order
-                       bottom-edge-order
-                       top-edges-in-odd-edge-positions
-                       top-corners-in-odd-corner-positions])
+(defrecord ParityCount [top-corner-order
+                        top-edge-order
+                        bottom-corner-order
+                        bottom-edge-order
+                        top-edges-in-odd-edge-positions
+                        top-corners-in-odd-corner-positions])
 
 (def ^:private parity-side-sequences #{[:left :front :back]
                                        [:left :back :right]

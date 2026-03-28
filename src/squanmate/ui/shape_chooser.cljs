@@ -23,7 +23,7 @@
   (let [shape-key (.-value s)]
     (reagent/as-element
      [:div [:img {:src (common/shape-preview-image-url shape-key)
-                  :style {:margin-top "-3px" }
+                  :style {:margin-top "-3px"}
                   :height "40px"}]
       (.-label s)])))
 
