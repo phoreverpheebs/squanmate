@@ -1,5 +1,6 @@
 (ns squanmate.ui.common
   (:require [cljsjs.react-bootstrap]
+            [cljs.reader :as r]
             [reagent.core :as reagent]))
 
 (def panel (reagent/adapt-react-class js/ReactBootstrap.Panel))

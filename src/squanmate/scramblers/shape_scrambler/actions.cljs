@@ -7,6 +7,7 @@
             [squanmate.services.shape-combinations :as shape-combinations]
             [squanmate.services.solving :as solving]
             [clojure.set :as set]
+            [cljs.reader :refer [read-string]]
             [squanmate.services.storage :as storage]
             [squanmate.scramblers.shape-scrambler.flip-layers-scrambler :as flip-layers-scrambler]
             [squanmate.ui.inspection-timer :as timer]))
@@ -46,7 +47,9 @@
   (ga/send-page-view :trainer/new-scramble))
 
 (defn set-new-weighted-scramble [state]
-  (let [s (weighted-scrambler/new-weighted-shape-scrambler (:selected-shapes @state) (:shape-weights @state))]
+  (let [s (weighted-scrambler/new-weighted-shape-scrambler
+           (:selected-shapes @state)
+           (:shape-weights @state))]
     (set-new-scramble state s)))
 
 (defn set-new-random-scramble [state]
@@ -75,9 +78,6 @@
     (swap! state update :selected-shapes set/difference #{this-case}))
   (set-new-random-scramble state))
 
-(defn start-timer [state]
-  ((:start-fn @(:timer @state))))
-
 (defn- inc-total [weight]
   (update weight :total inc))
 
@@ -92,20 +92,56 @@
                                         inc-total)))
 
 (defn- update-weight-total [shape-weights shape-case]
-  (update shape-weights shape-case #(-> %
-                                        inc-total)))
+  (update shape-weights shape-case inc-total))
+
+(defn write-weights [state]
+  (let [weights (pr-str (:shape-weights @state))]
+    (swap! state update-in [:weighted-scramble-settings :input-shape-weights] (constantly weights))))
 
 (defn mark-shape-correct [state]
-  (let [this-case (:chosen-layers @state)
-        shape-weights (:shape-weights @state)]
-    (swap! state update :shape-weights update-weight-correct this-case)))
+  (when-some [this-case (:chosen-layers @state)]
+    (let [shape-weights (:shape-weights @state)]
+      (swap! state update :shape-weights update-weight-correct this-case))
+    (write-weights state)))
 
 (defn mark-shape-incorrect [state]
-  (let [this-case (:chosen-layers @state)
-        shape-weights (:shape-weights @state)]
-    (swap! state update :shape-weights update-weight-total this-case)))
+  (when-some [this-case (:chosen-layers @state)]
+    (let [shape-weights (:shape-weights @state)]
+      (swap! state update :shape-weights update-weight-total this-case))
+    (write-weights state)))
+
+(defn mark-correct-and-generate-new-weighted-scramble! [state]
+  (mark-shape-correct state)
+  (set-new-weighted-scramble state))
+
+(defn mark-incorrect-and-generate-new-weighted-scramble! [state]
+  (mark-shape-incorrect state)
+  (set-new-weighted-scramble state))
+
+(defn toggle-timer [state]
+  (let [timer (:timer @state)]
+    (if-not (:started? @timer)
+      ((:start-fn @timer))
+      ((:stop-fn @timer)))))
+
+; source: https://gist.github.com/rotaliator/73daca2dc93c586122a0da57189ece13
+(defn copy-to-clipboard [val]
+  (let [el (js/document.createElement "textarea")]
+    (set! (.-value el) val)
+    (.appendChild js/document.body el)
+    (.select el)
+    (js/document.execCommand "copy")
+    (.removeChild js/document.body el)))
+
+(defn import-weights [state]
+  (let [input-weights-str (-> @state
+                              :weighted-scramble-settings
+                              :input-shape-weights)]
+    (if-not (clojure.string/includes? input-weights-str "(") ; boom injection prevention
+      (let [input-weights (read-string input-weights-str)]
+        (swap! state update :shape-weights (constantly input-weights))))))
 
 (defn reset-weights [state]
-  (print (:shape-weights @state))
-  (swap! state update :shape-weights (constantly {}))
-  (print "Reset shape weights!"))
+  (print (pr-str (:shape-weights @state)))
+  (swap! state update-in [:weighted-scramble-settings :input-shape-weights] (constantly "{}"))
+  (swap! state update :shape-weights (constantly {})))

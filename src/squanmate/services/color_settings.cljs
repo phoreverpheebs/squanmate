@@ -5,9 +5,9 @@
                           front back])
 
 (def defaults (map->ColorSettings
-               {:top :white
-                :bottom :yellow
-                :left :blue
-                :right :green
-                :front :orange
-                :back :red}))
+               {:top :black
+                :bottom :white
+                :left :green
+                :right :blue
+                :front :red
+                :back :orange}))

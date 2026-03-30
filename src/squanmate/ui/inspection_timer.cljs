@@ -24,6 +24,10 @@
   (.start tock start-ms)
   (swap! state assoc :started? true))
 
+(defn- stop [tock state]
+  (swap! state assoc :completed? true)
+  (.stop tock))
+
 (defn new-count-down-timer
   "A timer that counts down from the given amount of seconds.
 
@@ -41,6 +45,7 @@
                              :completed? false
                              :started? false})]
     (swap! state assoc :start-fn #(start tock start-ms state))
+    (swap! state assoc :stop-fn #(stop tock state))
     (aset tock "callback"
           #(count-full-seconds state tock start-seconds))
     (aset tock "complete"

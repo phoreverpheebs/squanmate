@@ -85,6 +85,8 @@
    [inspection-timer-settings/inspection-timer-options (reagent/cursor state [:inspection-timer-settings])]
    [weighted-scramble-settings/weighted-scramble-options (reagent/cursor state [:weighted-scramble-settings])]
    [common/button {:on-click #(a/reset-weights state)} "Reset weights"]
+   [common/button {:on-click #(a/import-weights state)} "Import weights"]
+   [common/button {:on-click #(a/write-weights state)} "Update weights"]
    [middle-layer-controls/controls (reagent/cursor state [:middle-layer-settings])]])
 
 (defn settings-component [state]
@@ -138,14 +140,14 @@
     "Deselect this case and generate a new scramble"]])
 
 (defn- scramble-correct-button [state]
-  [common/button {:on-click #((a/mark-shape-correct state) (a/set-new-weighted-scramble state))
+  [common/button {:on-click #(a/mark-correct-and-generate-new-weighted-scramble! state)
                   :id "scramble-correct"
                   :title "Correct"
                   :disabled (or (not (a/weighted-scrambles-enabled? state)) (a/no-scramble? state))
                   :bs-style :success}])
 
 (defn- scramble-incorrect-button [state]
-  [common/button {:on-click #((a/mark-shape-incorrect state) (a/set-new-weighted-scramble state))
+  [common/button {:on-click #(a/mark-incorrect-and-generate-new-weighted-scramble! state)
                   :id "scramble-incorrect"
                   :title "Incorrect"
                   :disabled (or (not (a/weighted-scrambles-enabled? state)) (a/no-scramble? state))
@@ -182,8 +184,12 @@
      [:div
       [:div.bottom17
        [action-buttons state]]
-      [:div.center
-       [puzzle-preview state draw-settings]]
+      (when (or (-> @state
+                    :weighted-scramble-settings
+                    :show-scramble?)
+                (not (a/weighted-scrambles-enabled? state)))
+        [:div.center
+         [puzzle-preview state draw-settings]])
       [:div.center
        [scramble-preview state]]
       [settings-component state]])))

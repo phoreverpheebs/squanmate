@@ -43,9 +43,25 @@
               (a/set-new-scramble-with-flipped-layers state))}
 
    {:key-combination "."
+    :description "Start/stop the inspection timer"
     :action (fn [state]
-              (print "doing the thing")
-              (a/start-timer state))}])
+              (a/toggle-timer state))}
+
+   {:key-combination "up"
+    :description "Scramble solved correctly"
+    :action (fn [state]
+              (when (a/weighted-scrambles-enabled? state)
+                (-> state
+                    a/mark-correct-and-generate-new-weighted-scramble!
+                    keyboard/prevent-bubbling)))}
+
+   {:key-combination "down"
+    :description "Scramble solved incorrectly"
+    :action (fn [state]
+              (when (a/weighted-scrambles-enabled? state)
+                (-> state
+                    a/mark-incorrect-and-generate-new-weighted-scramble!
+                    keyboard/prevent-bubbling)))}])
 
 (defn initial-state []
   (let [settings-atom (shape-scrambler/new-state :keybindings keybindings)
