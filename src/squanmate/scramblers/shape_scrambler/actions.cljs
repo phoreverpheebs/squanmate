@@ -1,5 +1,6 @@
 (ns squanmate.scramblers.shape-scrambler.actions
   (:require [squanmate.scramblers.shape-scrambler.default-scrambler :as default-scrambler]
+            [squanmate.scramblers.shape-scrambler.weighted-scrambler :as weighted-scrambler]
             [squanmate.scramblers.shape-scrambler.predetermined-parity-scrambler :as pps]
             [squanmate.scramblers.shape-scrambler.scrambler :as scrambler]
             [squanmate.services.google-analytics :as ga]
@@ -18,6 +19,12 @@
   (let [selected-layers-count (-> @state :selected-shapes count)]
     (<= selected-layers-count 0)))
 
+(defn no-scramble? [state]
+  (nil? (:chosen-shapes @state)))
+
+(defn weighted-scrambles-enabled? [state]
+  (-> @state :weighted-scramble-settings :weighted-scrambles-enabled?))
+
 (defn select-all-shapes [state]
   (swap! state assoc :selected-shapes all-layers))
 
@@ -30,12 +37,17 @@
            :scramble-algorithm nil
            :puzzle new-scramble
            :timer (timer/new-count-down-timer 15)
-           :chosen-shapes (into #{} chosen-layers))
+           :chosen-shapes (into #{} chosen-layers)
+           :chosen-layers chosen-layers)
     (solving/solve-and-generate-scramble new-scramble state)))
 
 (defn set-new-scramble [state scrambler]
   (new-scramble! state scrambler)
   (ga/send-page-view :trainer/new-scramble))
+
+(defn set-new-weighted-scramble [state]
+  (let [s (weighted-scrambler/new-weighted-shape-scrambler (:selected-shapes @state) (:shape-weights @state))]
+    (set-new-scramble state s)))
 
 (defn set-new-random-scramble [state]
   (let [s (default-scrambler/new-default-shape-scrambler (:selected-shapes @state))]
@@ -65,3 +77,35 @@
 
 (defn start-timer [state]
   ((:start-fn @(:timer @state))))
+
+(defn- inc-total [weight]
+  (update weight :total inc))
+
+(defn- inc-correct [weight]
+  (-> weight
+      (update :correct inc)
+      inc-total))
+
+(defn- update-weight-correct [shape-weights shape-case]
+  (update shape-weights shape-case #(-> %
+                                        (update :correct inc)
+                                        inc-total)))
+
+(defn- update-weight-total [shape-weights shape-case]
+  (update shape-weights shape-case #(-> %
+                                        inc-total)))
+
+(defn mark-shape-correct [state]
+  (let [this-case (:chosen-layers @state)
+        shape-weights (:shape-weights @state)]
+    (swap! state update :shape-weights update-weight-correct this-case)))
+
+(defn mark-shape-incorrect [state]
+  (let [this-case (:chosen-layers @state)
+        shape-weights (:shape-weights @state)]
+    (swap! state update :shape-weights update-weight-total this-case)))
+
+(defn reset-weights [state]
+  (print (:shape-weights @state))
+  (swap! state update :shape-weights (constantly {}))
+  (print "Reset shape weights!"))

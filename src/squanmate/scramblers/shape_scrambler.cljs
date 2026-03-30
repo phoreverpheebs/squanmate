@@ -8,6 +8,7 @@
             [squanmate.ui.drawing.newmonochrome :as newmonochrome]
             [squanmate.ui.inspection-timer :as timer]
             [squanmate.ui.inspection-timer-settings :as inspection-timer-settings]
+            [squanmate.ui.weighted-scramble-settings :as weighted-scramble-settings]
             [squanmate.ui.layer-selector :as layer-selector]
             [squanmate.ui.middle-layer-controls :as middle-layer-controls]
             [squanmate.ui.shape-chooser :as shape-chooser]
@@ -82,6 +83,8 @@
 (defn scramble-options [state]
   [common/form
    [inspection-timer-settings/inspection-timer-options (reagent/cursor state [:inspection-timer-settings])]
+   [weighted-scramble-settings/weighted-scramble-options (reagent/cursor state [:weighted-scramble-settings])]
+   [common/button {:on-click #(a/reset-weights state)} "Reset weights"]
    [middle-layer-controls/controls (reagent/cursor state [:middle-layer-settings])]])
 
 (defn settings-component [state]
@@ -101,11 +104,14 @@
   ;; removing them very easy in code.
   (reagent/atom
    {:puzzle nil
+    :chosen-layers nil
     :chosen-shapes nil
     :selected-shapes #{(set ["square" "square"])}
+    :shape-weights {}
     :scramble-algorithm nil
     :middle-layer-settings (deref (middle-layer-controls/default-state))
     :inspection-timer-settings (deref (inspection-timer-settings/default-state))
+    :weighted-scramble-settings (deref (weighted-scramble-settings/default-state))
     :timer nil
     ;; optional
     :keybindings keybindings}))
@@ -131,6 +137,20 @@
    [common/menu-item {:on-click #(a/deselect-case-and-generate-new-scramble! state)}
     "Deselect this case and generate a new scramble"]])
 
+(defn- scramble-correct-button [state]
+  [common/button {:on-click #((a/mark-shape-correct state) (a/set-new-weighted-scramble state))
+                  :id "scramble-correct"
+                  :title "Correct"
+                  :disabled (or (not (a/weighted-scrambles-enabled? state)) (a/no-scramble? state))
+                  :bs-style :success}])
+
+(defn- scramble-incorrect-button [state]
+  [common/button {:on-click #((a/mark-shape-incorrect state) (a/set-new-weighted-scramble state))
+                  :id "scramble-incorrect"
+                  :title "Incorrect"
+                  :disabled (or (not (a/weighted-scrambles-enabled? state)) (a/no-scramble? state))
+                  :bs-style :warning}])
+
 (defn- inspect-scramble-button [state]
   [common/button {:on-click #(links/set-link-to-scramble (:scramble-algorithm @state))}
    [common/glyphicon {:glyph :search}]
@@ -144,7 +164,9 @@
    [repeat-case-button state]
    [new-scramble-button state]
    [inspect-scramble-button state]
-   [cheat-sheet-button state]])
+   [cheat-sheet-button state]
+   [scramble-correct-button state]
+   [scramble-incorrect-button state]])
 
 (defn- puzzle-preview [state draw-settings]
   (if-let [p (:puzzle @state)]

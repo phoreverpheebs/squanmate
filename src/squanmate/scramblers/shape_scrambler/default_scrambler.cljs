@@ -18,7 +18,7 @@
         shuffle
         vec)))
 
-(defn- shape-str [shape-name]
+(defn shape-str [shape-name]
   (p/pieces-str (get shapes/all-shapes shape-name)))
 
 (defn apply-random-rotations [puzzle]
