@@ -2,6 +2,7 @@
   (:require [squanmate.scramblers.alg-trainer.algset-scrambler :as algset-scrambler]
             [squanmate.services.google-analytics :as ga]
             [squanmate.services.solving :as solving]
+            [squanmate.scramblers.algsets.orient-both-layers :as obl]
             [squanmate.scramblers.algsets.edge-permutation :as ep]
             [squanmate.scramblers.algsets.permute-last-layer :as pll]
             [squanmate.scramblers.algsets.lin-corner-permutation :as lin-cp]
@@ -24,6 +25,8 @@
   "The algorithm sets the algorithm trainer supports"
   [{:name "Cubeshape"
     :algset cubeshape/cubeshape-algset}
+   {:name "Orient both layers (OBL)"
+    :algset obl/obl-algset}
    {:name "Edge permutation (EP)"
     :algset ep/ep-algset}
    {:name "Permute last layer (PLL)"
