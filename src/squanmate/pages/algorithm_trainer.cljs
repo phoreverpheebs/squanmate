@@ -12,7 +12,23 @@
     :action (fn [state]
               (-> state
                   scramble-generation/set-new-scramble!
-                  keyboard/prevent-bubbling))}])
+                  keyboard/prevent-bubbling))}
+
+   {:key-combination "up"
+    :description "Scramble solved correctly"
+    :action (fn [state]
+              (when (-> @state :weighted-scramble-settings :weighted-scrambles-enabled?)
+                (-> state
+                    scramble-generation/mark-correct-and-set-new-weighted-scramble!
+                    keyboard/prevent-bubbling)))}
+
+   {:key-combination "down"
+    :description "Scramble solved incorrectly"
+    :action (fn [state]
+              (when (-> @state :weighted-scramble-settings :weighted-scrambles-enabled?)
+                (-> state
+                    scramble-generation/mark-incorrect-and-set-new-weighted-scramble!
+                    keyboard/prevent-bubbling)))}])
 
 (defn- set-keyboard-bindings! [state]
   (doseq [{:keys [key-combination, action]} keybindings

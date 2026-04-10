@@ -15,6 +15,15 @@
 (defn- compute-success-rates [weights]
   (into (sorted-map-by (fn [k1 k2] (< (success-rate (get weights k1)) (success-rate (get weights k2))))) weights))
 
+(defn select-cases [cases weights]
+  (->> weights
+       compute-success-rates
+       keys
+       (take (max 2 (/ (count weights) 6)))
+       (concat (set/difference (set cases) (set (keys weights))))
+       seq
+       rand-nth))
+
 (defn- choose-top-and-bottom-shape-names [possible-layers weights]
   (->> weights
        compute-success-rates

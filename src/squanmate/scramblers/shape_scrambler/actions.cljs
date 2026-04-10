@@ -96,7 +96,7 @@
 
 (defn write-weights [state]
   (let [weights (pr-str (:shape-weights @state))]
-    (swap! state update-in [:weighted-scramble-settings :input-shape-weights] (constantly weights))))
+    (swap! state update-in [:weighted-scramble-settings :input-weights] (constantly weights))))
 
 (defn mark-shape-correct [state]
   (when-some [this-case (:chosen-layers @state)]
@@ -124,24 +124,15 @@
       ((:start-fn @timer))
       ((:stop-fn @timer)))))
 
-; source: https://gist.github.com/rotaliator/73daca2dc93c586122a0da57189ece13
-(defn copy-to-clipboard [val]
-  (let [el (js/document.createElement "textarea")]
-    (set! (.-value el) val)
-    (.appendChild js/document.body el)
-    (.select el)
-    (js/document.execCommand "copy")
-    (.removeChild js/document.body el)))
-
 (defn import-weights [state]
   (let [input-weights-str (-> @state
                               :weighted-scramble-settings
-                              :input-shape-weights)]
+                              :input-weights)]
     (if-not (clojure.string/includes? input-weights-str "(") ; boom injection prevention
       (let [input-weights (read-string input-weights-str)]
         (swap! state update :shape-weights (constantly input-weights))))))
 
 (defn reset-weights [state]
   (print (pr-str (:shape-weights @state)))
-  (swap! state update-in [:weighted-scramble-settings :input-shape-weights] (constantly "{}"))
+  (swap! state update-in [:weighted-scramble-settings :input-weights] (constantly "{}"))
   (swap! state update :shape-weights (constantly {})))

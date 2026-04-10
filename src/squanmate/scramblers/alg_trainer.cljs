@@ -1,6 +1,7 @@
 (ns squanmate.scramblers.alg-trainer
   (:require [clojure.set :as set]
             [clojure.string :as str]
+            [cljs.reader :refer [read-string]]
             [reagent.core :as reagent]
             [squanmate.pages.links :as links]
             [squanmate.scramblers.alg-trainer.algset-scrambler :as algset-scrambler]
@@ -12,6 +13,7 @@
             [squanmate.ui.common :as common]
             [squanmate.ui.drawing.newmonochrome :as newmonochrome]
             [squanmate.ui.middle-layer-controls :as middle-layer-controls]
+            [squanmate.ui.weighted-scramble-settings :as weighted-scramble-settings]
             [squanmate.ui.shortcut-cheat-sheet :as shortcut-cheat-sheet]))
 
 (defn- puzzle-preview [state draw-settings-map]
@@ -101,6 +103,14 @@
                     :event-key index}
       [case-selections state algset]])])
 
+(defn- import-weights [state]
+  (let [input-weights-str (-> @state
+                              :weighted-scramble-settings
+                              :input-weights)]
+    (if-not (clojure.string/includes? input-weights-str "(") ; boom injection prevention
+      (let [input-weights (read-string input-weights-str)]
+        (swap! state update :case-weights (constantly input-weights))))))
+
 (defn- settings [state]
   [common/accordion {:default-active-key 1}
    [common/panel {:header (reagent/as-element [:span [common/glyphicon {:glyph :cog}]
@@ -110,11 +120,15 @@
    [common/panel {:header (reagent/as-element [:span [common/glyphicon {:glyph :wrench}]
                                                " Scramble options"])
                   :event-key 2}
+    [weighted-scramble-settings/weighted-scramble-options (reagent/cursor state [:weighted-scramble-settings])]
+    [common/button {:on-click #(import-weights state)} "Import weights"]
     [middle-layer-controls/controls (reagent/cursor state [:middle-layer-settings])]]])
 
 (defn new-default-state [& {:keys [keybindings]}]
   (reagent/atom {:selected-cases #{}
                  :middle-layer-settings (deref (middle-layer-controls/default-state))
+                 :case-weights {}
+                 :weighted-scramble-settings (deref (weighted-scramble-settings/default-state))
                  ;; optional
                  :keybindings keybindings}))
 
@@ -125,6 +139,20 @@
      [common/button {:on-click #(scramble-generation/set-new-scramble! state)
                      :bs-style :success}
       "New scramble"])])
+
+(defn- scramble-correct-button [state]
+  (when (and (:chosen-case @state) (-> @state :weighted-scramble-settings :weighted-scrambles-enabled?))
+    [common/button {:on-click #(scramble-generation/mark-correct-and-set-new-weighted-scramble! state)
+                    :id "scramble-correct"
+                    :title "Correct"
+                    :bs-style :success}]))
+
+(defn- scramble-incorrect-button [state]
+  (when (and (:chosen-case @state) (-> @state :weighted-scramble-settings :weighted-scrambles-enabled?))
+    [common/button {:on-click #(scramble-generation/mark-incorrect-and-set-new-weighted-scramble! state)
+                    :id "scramble-correct"
+                    :title "Incorrect"
+                    :bs-style :warning}]))
 
 (defn- inspect-scramble-button [state]
   (when (:chosen-case @state)
@@ -146,6 +174,8 @@
    [repeat-scramble-button state]
    [new-scramble-button state]
    [inspect-scramble-button state]
+   [scramble-correct-button state]
+   [scramble-incorrect-button state]
    [cheat-sheet-button state]])
 
 (defn trainer-component

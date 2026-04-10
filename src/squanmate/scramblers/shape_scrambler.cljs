@@ -140,18 +140,18 @@
     "Deselect this case and generate a new scramble"]])
 
 (defn- scramble-correct-button [state]
-  [common/button {:on-click #(a/mark-correct-and-generate-new-weighted-scramble! state)
-                  :id "scramble-correct"
-                  :title "Correct"
-                  :disabled (or (not (a/weighted-scrambles-enabled? state)) (a/no-scramble? state))
-                  :bs-style :success}])
+  (when (and (:chosen-shapes @state) (a/weighted-scrambles-enabled? state))
+    [common/button {:on-click #(a/mark-correct-and-generate-new-weighted-scramble! state)
+                    :id "scramble-correct"
+                    :title "Correct"
+                    :bs-style :success}]))
 
 (defn- scramble-incorrect-button [state]
-  [common/button {:on-click #(a/mark-incorrect-and-generate-new-weighted-scramble! state)
-                  :id "scramble-incorrect"
-                  :title "Incorrect"
-                  :disabled (or (not (a/weighted-scrambles-enabled? state)) (a/no-scramble? state))
-                  :bs-style :warning}])
+  (when (and (:chosen-shapes @state) (a/weighted-scrambles-enabled? state))
+    [common/button {:on-click #(a/mark-incorrect-and-generate-new-weighted-scramble! state)
+                    :id "scramble-incorrect"
+                    :title "Incorrect"
+                    :bs-style :warning}]))
 
 (defn- inspect-scramble-button [state]
   [common/button {:on-click #(links/set-link-to-scramble (:scramble-algorithm @state))}
@@ -166,9 +166,9 @@
    [repeat-case-button state]
    [new-scramble-button state]
    [inspect-scramble-button state]
-   [cheat-sheet-button state]
    [scramble-correct-button state]
-   [scramble-incorrect-button state]])
+   [scramble-incorrect-button state]
+   [cheat-sheet-button state]])
 
 (defn- puzzle-preview [state draw-settings]
   (if-let [p (:puzzle @state)]

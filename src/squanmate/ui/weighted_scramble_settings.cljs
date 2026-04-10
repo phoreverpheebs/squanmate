@@ -5,7 +5,7 @@
 (defn default-state []
   (reagent/atom {:weighted-scrambles-enabled? true
                  :show-scramble? true
-                 :input-shape-weights "{}"}))
+                 :input-weights "{}"}))
 
 (defn weighted-scramble-options [state]
   [common/form-group
@@ -15,4 +15,4 @@
     "Enable weighted scrambles for efficient learning"]
    [common/checkbox {:checked (-> @state :show-scramble?)
                      :on-change #(swap! state update :show-scramble? not)} "Show scramble"]
-   [common/input-box (reagent/cursor state [:input-shape-weights]) "Weights"]])
+   [common/input-box (reagent/cursor state [:input-weights]) "Weights"]])
