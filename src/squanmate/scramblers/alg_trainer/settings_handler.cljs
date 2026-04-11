@@ -9,6 +9,8 @@
 
 (defn save-settings! [state-map]
   (let [settings (->> (select-keys state-map [:selected-cases
-                                              :middle-layer-settings])
+                                              :middle-layer-settings
+                                              :weighted-scramble-settings
+                                              :input-weights])
                       (into {}))]
     (storage/save "alg-trainer-settings" settings)))

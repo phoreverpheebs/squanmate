@@ -16,7 +16,7 @@
   (into (sorted-map-by (fn [k1 k2] (< (success-rate (get weights k1)) (success-rate (get weights k2))))) weights))
 
 (defn select-cases [cases weights]
-  (->> weights
+  (->> (select-keys weights cases)
        compute-success-rates
        keys
        (take (max 2 (/ (count weights) 6)))
